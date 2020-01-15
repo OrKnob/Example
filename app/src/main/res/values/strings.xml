@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Hackathon_Practice</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="map_key">AIzaSyAIR3ZGcdpB4xcW8sdZL4Hl4ShvbJ8K8h4</string>
+</resources>
