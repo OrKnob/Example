@@ -16,7 +16,11 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_weight="1"
         map:cameraZoom = "16"/>
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="3dp">
     <Button
         android:layout_width="200dp"
         android:layout_height="70dp"
@@ -25,5 +29,15 @@
         android:layout_gravity="center_horizontal"
         android:id="@+id/btnShow"
         />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:layout_centerHorizontal="true"
+        android:text="Nearest Gas Station"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/btnNear"
+        />
+</LinearLayout>
 
 </LinearLayout>

@@ -53,12 +53,20 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, com.google.android.gms.location.LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    Button btnShow;
+    Button btnShow,btnNear;
     private GoogleMap mMap;
-    private Location mLocation;
+    private Location mLocation,farLocation;
     private LocationManager mlocationManager;
     private LocationRequest mlocationRequest;
     private LocationListener listener;
@@ -71,6 +79,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private float start_rotation;
     int PROXIMITY_RADIUS = 10000;
     LatLng latLng;
+    float distance;
+    ArrayList<Float> distances ;
+    String string;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +92,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         btnShow = findViewById(R.id.btnShow);
+        btnNear = findViewById(R.id.btnNear);
 
         if (requestSinglePermission()) {
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
@@ -94,25 +108,67 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             checkLocation();
         }
 
+        btnNear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetNearbyPlacesData getNearest = new GetNearbyPlacesData();
+
+                try {
+                    JSONObject parentObject = new JSONObject();
+                    JSONArray jsonArray = parentObject.getJSONArray("results");
+                    mLocation.setLatitude(latLng.latitude);
+                    mLocation.setLongitude(latLng.longitude);
+                    distances = new ArrayList<>();
+
+                    for(int i = 0;i<jsonArray.length();i++){
+
+                        JSONObject locationObject = jsonArray.getJSONObject(i);
+                        String latitude_new  = locationObject.getString("lat");
+                        String longitude_new = locationObject.getString("lng");
+                        farLocation.setLatitude(Double.parseDouble(latitude_new));
+                        farLocation.setLatitude(Double.parseDouble(longitude_new));
+                        distance = mLocation.distanceTo(farLocation);
+                        distances.add(distance);
+
+                    }
+                   String s = String.valueOf(Collections.min(distances)) ;
+                    Toast.makeText(MainActivity.this,s, Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
          btnShow.setOnClickListener(new View.OnClickListener() {
            @Override
               public void onClick(View v) {
 
+                 findPetrolPumps();
 
-
-                   String petrolPump = "PetrolPump";
+                   /*String petrolPump = "PetrolPump";
                    String url = getUrl(latLng.latitude,latLng.longitude,petrolPump);
                    Object dataTransfer[] = new Object[2];
                    dataTransfer[0] = mMap;
                    dataTransfer[1] = url;
                    GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
-                   getNearbyPlacesData.execute(dataTransfer);
+                   getNearbyPlacesData.execute(dataTransfer);*/
 
                 }
                });
     }
 
-    private String getUrl(double latitude,double longitude,String nearbyPlace){
+    public static float getMin(float[] inputArray){
+        float minValue = inputArray[0];
+        for(int i=1;i<inputArray.length;i++){
+            if(inputArray[i] < minValue){
+                minValue = inputArray[i];
+            }
+        }
+        return minValue;
+    }
+
+    /*private String getUrl(double latitude,double longitude,String nearbyPlace){
 
         StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
         stringBuilder.append("location=" + latitude + "," + longitude);
@@ -123,7 +179,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         String url = stringBuilder.toString();
         return url;
-    }
+    }*/
     private boolean checkLocation() {
 
         if (!isLocationEnabled()) {
@@ -358,6 +414,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             stringBuilder.append("location=" + latLng.latitude + "," + latLng.longitude);
             stringBuilder.append("&radius=" + PROXIMITY_RADIUS);
             stringBuilder.append("&type=" + petrolpump);
+        stringBuilder.append("&keyword="+petrolpump);
             stringBuilder.append("&key=AIzaSyChE2NwROMNfL058B4rGgB3hXOUpHvInds");
 
             String url = stringBuilder.toString();
