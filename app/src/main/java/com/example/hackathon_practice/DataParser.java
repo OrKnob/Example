@@ -1,3 +1,4 @@
+
 package com.example.hackathon_practice;
 
 import org.json.JSONArray;
@@ -10,10 +11,11 @@ import java.util.List;
 
 public class DataParser {
 
+
     private HashMap<String,String> getPlace(JSONObject googlePlaceJson){
         HashMap<String,String> googlePlaceMap = new HashMap<>();
-        String placeName = "-NA_";
-        String vicinity = "-NA_";
+        String placeName = "-NA-";
+        String vicinity = "-NA-";
         String latitude = "";
         String longitude = "";
         String reference = "";
@@ -42,8 +44,8 @@ public class DataParser {
         }
 
         private List<HashMap<String,String>> getPlaces(JSONArray jsonArray){
+            int count = jsonArray.length();
 
-        int count = jsonArray.length();
         List<HashMap<String,String>> placesList = new ArrayList<>();
         HashMap<String,String> placeMap = null;
 
@@ -73,6 +75,7 @@ public class DataParser {
 
         }
     }
+
 
 
 

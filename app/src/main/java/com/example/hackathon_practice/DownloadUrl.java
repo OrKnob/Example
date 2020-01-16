@@ -1,3 +1,4 @@
+
 package com.example.hackathon_practice;
 
 import java.io.BufferedReader;
@@ -38,7 +39,9 @@ public class DownloadUrl {
             e.printStackTrace();
         }
         finally {
-            inputStream.close();
+            if(inputStream != null) {
+                inputStream.close();
+            }
             urlConnection.disconnect();
         }
 
@@ -46,3 +49,4 @@ public class DownloadUrl {
     }
 
 }
+

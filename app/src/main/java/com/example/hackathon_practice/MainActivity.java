@@ -65,13 +65,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private long UPDATE_INTERVAL = 20;
     private long FASTEST_intervall = 2000;
     private LocationManager locationManager;
-    private LatLng latLng;
     private boolean isPermission;
     private GoogleApiClient mGoogleApiClient;
     private Marker currentLocationMarker;
     private float start_rotation;
     int PROXIMITY_RADIUS = 10000;
-    double latitude,longitude;
+    LatLng latLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,9 +97,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
          btnShow.setOnClickListener(new View.OnClickListener() {
            @Override
               public void onClick(View v) {
-                   mMap.clear();
-                   String gasStation = "GasStation";
-                   String url = getUrl(latitude,longitude,gasStation);
+
+
+
+                   String petrolPump = "PetrolPump";
+                   String url = getUrl(latLng.latitude,latLng.longitude,petrolPump);
                    Object dataTransfer[] = new Object[2];
                    dataTransfer[0] = mMap;
                    dataTransfer[1] = url;
@@ -112,15 +113,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private String getUrl(double latitude,double longitude,String nearbyPlace){
-        StringBuilder googlePlaceUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-        googlePlaceUrl.append("location"+latitude+","+longitude);
-        googlePlaceUrl.append("&radius="+PROXIMITY_RADIUS);
-        googlePlaceUrl.append("&type="+nearbyPlace);
-        googlePlaceUrl.append("&sensor=true");
-        googlePlaceUrl.append("&key=AIzaSyAIR3ZGcdpB4xcW8sdZL4Hl4ShvbJ8K8h4");
-        return googlePlaceUrl.toString();
-    }
 
+        StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        stringBuilder.append("location=" + latitude + "," + longitude);
+        stringBuilder.append("&radius=" + PROXIMITY_RADIUS);
+        stringBuilder.append("&type=" + nearbyPlace);
+        stringBuilder.append("&keyword="+nearbyPlace);
+        stringBuilder.append("&key=AIzaSyChE2NwROMNfL058B4rGgB3hXOUpHvInds");
+
+        String url = stringBuilder.toString();
+        return url;
+    }
     private boolean checkLocation() {
 
         if (!isLocationEnabled()) {
@@ -195,9 +198,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (mLocation == null) {
             startLocationUpdates();
-        } else {
+        } /*else {
             Toast.makeText(this, "Location not detected", Toast.LENGTH_SHORT).show();
-        }
+        }*/
 
     }
 
@@ -348,4 +351,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }*/
+
+    public void findPetrolPumps(){
+            String petrolpump = "PetrolPump";
+            StringBuilder stringBuilder = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+            stringBuilder.append("location=" + latLng.latitude + "," + latLng.longitude);
+            stringBuilder.append("&radius=" + PROXIMITY_RADIUS);
+            stringBuilder.append("&type=" + petrolpump);
+            stringBuilder.append("&key=AIzaSyChE2NwROMNfL058B4rGgB3hXOUpHvInds");
+
+            String url = stringBuilder.toString();
+
+            Object dataTransfer[] = new Object[2];
+            dataTransfer[0] = mMap;
+            dataTransfer[1] = url;
+
+
+            GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
+            getNearbyPlacesData.execute(dataTransfer);
+
+    }
 }
